@@ -6,6 +6,9 @@ local window = library:AddWindow("SYNİOX PUBLIC | MUSCLE LEGENDS | ByYusuf | V1
     can_resize = true,
 })
 
+-- Servis Tanımlaması (En başa eklenmeli)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local AutoFarm = window:AddTab("Farm")
 
 AutoFarm:AddLabel("Complements to Farm")
@@ -375,17 +378,29 @@ Rock:AddSwitch("Muscle King Rock", function(Value)
     
     task.spawn(function()
         while getgenv().autoFarm do
-            task.wait()
+            -- task.wait() yerine çok daha kısa bir bekleme veya boşluk bırakıyoruz
+            task.wait(0.01) 
+            
             if not getgenv().autoFarm then break end
             
             if game:GetService("Players").LocalPlayer.Durability.Value >= 5000000 then
                 for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
-                    if v.Name == "neededDurability" and v.Value == 5000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
-                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
-                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
-                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
-                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
-                        gettool()
+                    if v.Name == "neededDurability" and v.Value == 5000000 then
+                        local character = game.Players.LocalPlayer.Character
+                        local rHand = character:FindFirstChild("RightHand")
+                        local lHand = character:FindFirstChild("LeftHand")
+                        
+                        if rHand and lHand then
+                            local rockPart = v.Parent.Rock
+                            -- Hızı artırmak için tek seferde birden fazla vuruş sinyali gönderiyoruz
+                            for _ = 1, 5 do 
+                                firetouchinterest(rockPart, rHand, 0)
+                                firetouchinterest(rockPart, rHand, 1)
+                                firetouchinterest(rockPart, lHand, 0)
+                                firetouchinterest(rockPart, lHand, 1)
+                            end
+                            gettool()
+                        end
                     end
                 end
             end
@@ -1343,17 +1358,8 @@ local showKillsButton = Killer:AddButton("Kill Counter UI", function()
 			titleLabel.BackgroundTransparency = 1
 			titleLabel.Text = "Syniox Public"
 			titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-			titleLabel.Font = Enum.Font.SourceSansBold
-			titleLabel.TextScaled = true
-			titleLabel.Parent = killsFrame
-
-			local killsLabel = Instance.new("TextLabel")
-			killsLabel.Size = UDim2.new(1, 0, 0, 35)
-			killsLabel.Position = UDim2.new(0, 0, 0, 20)
-			killsLabel.BackgroundTransparency = 1
-			killsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-			killsLabel.TextScaled = true
-			killsLabel.Font = Enum.Font.SourceSansBold
+			titleLabel.Font = Enum.Font.SolChild("Kills")
+					if kills thenllsLabel.Font = Enum.Font.SourceSansBold
 			killsLabel.Parent = killsFrame
 
 			coroutine.wrap(function()
@@ -1379,130 +1385,132 @@ end)
 
 showKillsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-local pets = window:AddTab("Pets")
+-- Servis Tanımlaması (En başa eklenmeli)
+
+
+
+						killsLabel.Text = "Kills: " .. tostring(kills.Value)
+					else
+						killsLabel.Text = "Kills: 0"
+					end
+					task.wait(0.2)
+				end
+			end)()
+		else
+			killsGui.Enabled = true
+		end
+	else
+		if killsGui then
+			killsGui.Enabled = false
+		end
+	end
+end)
+
+showKillsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+--[ PETS & AURA TAB ]--
+PetsTab:AddLabel("Pet & Aura")
+
 local selectedPet = "Neon Guardian"
-local petDropdown = pets:AddDropdown("Select Pet", function(text)
+local petDropdown = PetsTab:AddDropdown("Select Pet Crystal", function(text)
     selectedPet = text
 end)
 
-petDropdown:Add("Neon Guardian")
-petDropdown:Add("Blue Birdie")
-petDropdown:Add("Blue Bunny")
-petDropdown:Add("Blue Firecaster")
-petDropdown:Add("Blue Pheonix")
-petDropdown:Add("Crimson Falcon")
-petDropdown:Add("Cybernetic Showdown Dragon")
-petDropdown:Add("Dark Golem")
-petDropdown:Add("Dark Legends Manticore")
-petDropdown:Add("Dark Vampy")
-petDropdown:Add("Darkstar Hunter")
-petDropdown:Add("Eternal Strike Leviathan")
-petDropdown:Add("Frostwave Legends Penguin")
-petDropdown:Add("Gold Warrior")
-petDropdown:Add("Golden Pheonix")
-petDropdown:Add("Golden Viking")
-petDropdown:Add("Green Butterfly")
-petDropdown:Add("Green Firecaster")
-petDropdown:Add("Infernal Dragon")
-petDropdown:Add("Lightning Strike Phantom")
-petDropdown:Add("Magic Butterfly")
-petDropdown:Add("Muscle Sensei")
-petDropdown:Add("Orange Hedgehog")
-petDropdown:Add("Orange Pegasus")
-petDropdown:Add("Phantom Genesis Dragon")
-petDropdown:Add("Purple Dragon")
-petDropdown:Add("Purple Falcon")
-petDropdown:Add("Red Dragon")
-petDropdown:Add("Red Firecaster")
-petDropdown:Add("Red Kitty")
-petDropdown:Add("Silver Dog")
-petDropdown:Add("Ultimate Supernova Pegasus")
-petDropdown:Add("Ultra Birdie")
-petDropdown:Add("White Pegasus")
-petDropdown:Add("White Pheonix")
-petDropdown:Add("Yellow Butterfly")
+-- Pet Listesi
+local petsList = {"Neon Guardian", 
+"Blue Birdie", 
+"Blue Bunny", 
+"Blue Firecaster", 
+"Blue Pheonix", 
+"Crimson Falcon", 
+"Cybernetic Showdown Dragon", 
+"Dark Golem", 
+"Dark Legends Manticore", 
+"Dark Vampy", 
+"Darkstar Hunter", 
+"Eternal Strike Leviathan", 
+"Frostwave Legends Penguin", 
+"Gold Warrior", 
+"Golden Pheonix", 
+"Golden Viking", 
+"Green Butterfly", 
+"Green Firecaster", 
+"Infernal Dragon", 
+"Lightning Strike Phantom", 
+"Magic Butterfly", 
+"Muscle Sensei", 
+"Orange Hedgehog", 
+"Orange Pegasus", 
+"Phantom Genesis Dragon", 
+"Purple Dragon", 
+"Purple Falcon", 
+"Red Dragon", 
+"Red Firecaster", 
+"Red Kitty", 
+"Silver Dog", 
+"Ultimate Supernova Pegasus", 
+"Ultra Birdie", 
+"White Pegasus", 
+"White Pheonix", 
+"Yellow Butterfly"}
+for _, name in pairs(petsList) do petDropdown:Add(name) end
 
-pets:AddSwitch("Auto Open Pet", function(bool)
+PetsTab:AddSwitch("Auto Open Pet", function(bool)
     _G.AutoHatchPet = bool
-    if bool then
-        spawn(function()
-            while _G.AutoHatchPet and selectedPet ~= "" do
-                local petToOpen = ReplicatedStorage.cPetShopFolder:FindFirstChild(selectedPet)
-                if petToOpen then
-                    ReplicatedStorage.cPetShopRemote:InvokeServer(petToOpen)
-                end
-                task.wait(0.1)
-            end
-        end)
-    end
+    task.spawn(function()
+        while _G.AutoHatchPet do
+            ReplicatedStorage.cPetShopRemote:InvokeServer("openCrystal", selectedPet)
+            task.wait(0.1)
+        end
+    end)
 end)
 
 local selectedAura = "Blue Aura"
-local auraDropdown = pets:AddDropdown("Select Aura", function(text)
+local auraDropdown = PetsTab:AddDropdown("Select Aura Crystal", function(text)
     selectedAura = text
 end)
 
-auraDropdown:Add("Astral Electro")
-auraDropdown:Add("Azure Tundra")
-auraDropdown:Add("Blue Aura")
-auraDropdown:Add("Dark Electro")
-auraDropdown:Add("Dark Lightning")
-auraDropdown:Add("Dark Storm")
-auraDropdown:Add("Electro")
-auraDropdown:Add("Enchanted Mirage")
-auraDropdown:Add("Entropic Blast")
-auraDropdown:Add("Eternal Megastrike")
-auraDropdown:Add("Grand Supernova")
-auraDropdown:Add("Green Aura")
-auraDropdown:Add("Inferno")
-auraDropdown:Add("Lightning")
-auraDropdown:Add("Muscle King")
-auraDropdown:Add("Power Lightning")
-auraDropdown:Add("Purple Aura")
-auraDropdown:Add("Purple Nova")
-auraDropdown:Add("Red Aura")
-auraDropdown:Add("Supernova")
-auraDropdown:Add("Ultra Inferno")
-auraDropdown:Add("Ultra Mirage")
-auraDropdown:Add("Unstable Mirage")
-auraDropdown:Add("Yellow Aura")
+-- Aura Listesi
+local auraList = {"Astral Electro", 
+"Azure Tundra", 
+"Blue Aura", 
+"Dark Electro", 
+"Dark Lightning", 
+"Dark Storm", 
+"Electro", 
+"Enchanted Mirage", 
+"Entropic Blast", 
+"Eternal Megastrike", 
+"Grand Supernova", 
+"Green Aura", "Inferno", 
+"Lightning", 
+"Muscle King", 
+"Power Lightning", 
+"Purple Aura", 
+"Purple Nova", 
+"Red Aura", 
+"Supernova", 
+"Ultra Inferno", 
+"Ultra Mirage", 
+"Unstable Mirage", 
+"Yellow Aura"}
+for _, name in pairs(auraList) do auraDropdown:Add(name) end
 
-pets:AddSwitch("Auto Open Aura", function(bool)
+PetsTab:AddSwitch("Auto Open Aura", function(bool)
     _G.AutoHatchAura = bool
-    if bool then
-        spawn(function()
-            while _G.AutoHatchAura and selectedAura ~= "" do
-                local auraToOpen = ReplicatedStorage.cPetShopFolder:FindFirstChild(selectedAura)
-                if auraToOpen then
-                    ReplicatedStorage.cPetShopRemote:InvokeServer(auraToOpen)
-                end
-                task.wait(0.1)
-            end
-        end)
-    end
+    task.spawn(function()
+        while _G.AutoHatchAura do
+            ReplicatedStorage.cPetShopRemote:InvokeServer("openCrystal", selectedAura)
+            task.wait(0.1)
+        end
+    end)
 end)
 
 local LookDura = window:AddTab("Stats")
 
 local SelectPlayerName = ""
 
-local PlayerDrop = LookDura:AddDropdown("Select Player", function(Value)
-    SelectPlayerName = Value:match("| (.+)")
-    previousValues = {}
-end)
-
-local Playerslist = {}
-for _, Plr in pairs(game:GetService("Players"):GetPlayers()) do
-    local displayName = Plr.DisplayName .. " | " .. Plr.Name
-    table.insert(Playerslist, displayName)
-end
-for _, AddPlr in ipairs(Playerslist) do
-    PlayerDrop:Add(AddPlr)
-end
-
-local function FormatNumberWithCommas(number)
-    local formatted = tostring(number):reverse():gsub("(%d%d%d)", "%1,"):reverse()
-    return formatted:gsub("^,", "")
+local PlayerDrop = LookDura:AddDropdown("Select Player", function(Value)d:gsub("^,", "")
 end
 
 local function FormatAbbreviated(number)
@@ -1541,16 +1549,16 @@ task.spawn(function()
         if SelectPlayerName ~= "" then
             local player = game.Players:FindFirstChild(SelectPlayerName)
             if player then
-                if player:FindFirstChild("Gems") then
+                if player:FindFirstChild("💎 Gems") then
                     Update1.Text = "Gems: " .. FormatDisplay(player.Gems.Value)
                 end
-                if player:FindFirstChild("Agility") then
+                if player:FindFirstChild("⚡ Agility") then
                     Update3.Text = "Agility: " .. FormatDisplay(player.Agility.Value)
                 end
                 if player:FindFirstChild("Durability") then
                     Update4.Text = "Durability: " .. FormatDisplay(player.Durability.Value)
                 end
-                if player:FindFirstChild("muscleKingTime") then
+                if player:FindFirstChild("🕑 muscleKingTime") then
                     Update6.Text = "Muscle King Time: " .. FormatDisplay(player.muscleKingTime.Value)
                 end
                 if player:FindFirstChild("customSize") then
@@ -1559,22 +1567,22 @@ task.spawn(function()
                 if player:FindFirstChild("customSpeed") then
                     Update11.Text = "Custom Speed: " .. FormatDisplay(player.customSpeed.Value)
                 end
-                if player:FindFirstChild("evilKarma") then
+                if player:FindFirstChild("😈 evilKarma") then
                     Update12.Text = "Evil Karma: " .. FormatDisplay(player.evilKarma.Value)
                 end
-                if player:FindFirstChild("goodKarma") then
+                if player:FindFirstChild("😇 goodKarma") then
                     Update13.Text = "Good Karma: " .. FormatDisplay(player.goodKarma.Value)
                 end
 
                 local leaderstats = player:FindFirstChild("leaderstats")
                 if leaderstats then
-                    if leaderstats:FindFirstChild("Strength") then
+                    if leaderstats:FindFirstChild("💪 Strength") then
                         Update.Text = "Strength: " .. FormatDisplay(leaderstats.Strength.Value)
                     end
                     if leaderstats:FindFirstChild("Rebirths") then
                         Update2.Text = "Rebirth: " .. FormatDisplay(leaderstats.Rebirths.Value)
                     end
-                    if leaderstats:FindFirstChild("Kills") then
+                    if leaderstats:FindFirstChild("💀 Kills") then
                         Update5.Text = "Kills: " .. FormatDisplay(leaderstats.Kills.Value)
                     end
                 end
@@ -1747,22 +1755,86 @@ teleport:AddButton("Brawl Regular", function()
     })
 end)
 
+-- MISC SEKMESI VE ANTI-AFK PANELİ
 local Misc = window:AddTab("Misc")
 
-local antiAFKEnabled = true
-Misc:AddButton("Anti Afk", function(bool)
-    antiAFKEnabled = bool
-    
-    if bool then
-        setupAntiAFK()
-    else
-        if antiAFKConnection then
-            antiAFKConnection:Disconnect()
-            antiAFKConnection = nil
-            print("Anti-AFK system disabled")
+Misc:AddButton("Anti Afk", function()
+    -- Arka Plan Koruma
+    local vu = game:GetService("VirtualUser")
+    game:GetService("Players").LocalPlayer.Idled:Connect(function()
+        vu:CaptureController()
+        vu:ClickButton2(Vector2.new())
+    end)
+
+    -- GUI Oluşturma (Ön Gösterimdeki Modern Tasarım)
+    local ScreenGui = Instance.new("ScreenGui")
+    local MainFrame = Instance.new("Frame")
+    local UICorner = Instance.new("UICorner")
+    local Title = Instance.new("TextLabel")
+    local Separator = Instance.new("Frame")
+    local TimerLabel = Instance.new("TextLabel")
+    local FPSLabel = Instance.new("TextLabel")
+    local UIStroke = Instance.new("UIStroke")
+
+    ScreenGui.Parent = game:GetService("CoreGui")
+    MainFrame.Parent = ScreenGui
+    MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+    MainFrame.Position = UDim2.new(0.05, 0, 0.4, 0)
+    MainFrame.Size = UDim2.new(0, 130, 0, 135)
+    MainFrame.Active = true
+    MainFrame.Draggable = true 
+
+    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.Parent = MainFrame
+
+    UIStroke.Parent = MainFrame
+    UIStroke.Color = Color3.fromRGB(120, 0, 0) 
+    UIStroke.Thickness = 1.5
+
+    Title.Parent = MainFrame
+    Title.Size = UDim2.new(1, 0, 0, 35)
+    Title.Text = "Syniox Public"
+    Title.TextColor3 = Color3.fromRGB(200, 0, 0)
+    Title.TextSize = 13
+    Title.Font = Enum.Font.GothamBold
+    Title.BackgroundTransparency = 1
+
+    Separator.Parent = MainFrame
+    Separator.BackgroundColor3 = Color3.fromRGB(120, 0, 0)
+    Separator.BorderSizePixel = 0
+    Separator.Position = UDim2.new(0.1, 0, 0, 35)
+    Separator.Size = UDim2.new(0.8, 0, 0, 1)
+
+    TimerLabel.Parent = MainFrame
+    TimerLabel.Position = UDim2.new(0, 0, 0, 45)
+    TimerLabel.Size = UDim2.new(1, 0, 0, 40)
+    TimerLabel.Text = "Süre: 00:00:00"
+    TimerLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    TimerLabel.TextSize = 13
+    TimerLabel.Font = Enum.Font.Gotham
+    TimerLabel.BackgroundTransparency = 1
+
+    FPSLabel.Parent = MainFrame
+    FPSLabel.Position = UDim2.new(0, 0, 0, 85)
+    FPSLabel.Size = UDim2.new(1, 0, 0, 40)
+    FPSLabel.Text = "FPS: Hesaplıyor..."
+    FPSLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    FPSLabel.TextSize = 13
+    FPSLabel.Font = Enum.Font.Gotham
+    FPSLabel.BackgroundTransparency = 1
+
+    local startTime = os.time()
+    local lastUpdate = 0
+    game:GetService("RunService").RenderStepped:Connect(function(dt)
+        local diff = os.time() - startTime
+        TimerLabel.Text = string.format("Süre: %02d:%02d:%02d", math.floor(diff/3600), math.floor((diff%3600)/60), diff%60)
+        lastUpdate = lastUpdate + dt
+        if lastUpdate >= 0.5 then
+            FPSLabel.Text = "FPS: " .. math.floor(1/dt)
+            lastUpdate = 0
         end
-    end
-end, true)
+    end)
+end)
 
 local switch = Misc:AddSwitch("Lock Position", function(Value)
     if Value then
@@ -2415,4 +2487,3 @@ credits:AddButton("Copy Discord Invite", function()
         setclipboard("https://discord.gg/FsG2cGay")
     end
 end)
-
