@@ -2459,7 +2459,7 @@ task.spawn(function()
     end
 end)
 
-fastStrenghtFolder:AddSwitch("Auto Eat Egg", function(state)
+fastStrengthFolder:AddSwitch("Auto Eat Egg", function(state)
     autoEatEnabled = state
 end)
 
@@ -2484,6 +2484,7 @@ credits:AddLabel("THANKS FOR USİNG THİS SCRİPT 🚀")
 
 credits:AddButton("Copy Discord Invite", function()
     if setclipboard then
-        setclipboard("https://discord.gg/FsG2cGay")
+        setclipboard("https://discord.gg/DbAU5Z6HPd")
     end
 end)
+
